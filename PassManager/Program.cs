@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Sharprompt;
 using System.Drawing;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace PassManager
 {
@@ -13,45 +14,54 @@ namespace PassManager
         //tiny.cc/hectorsolar99
         //bit.ly/hectorsolar99
 
+        #region variables
+        public static Regex yesPattern = new(@"[ok]||[accept]||[true]||[y*]||[s*]");
+        #endregion
+
         static void Main(string[] args) {
 
-            try {
-                
-               // Style();
-                Console.WriteLine("Welcome user thanks for using password manager");
-                
+            try
+            {
 
+                Console.WriteLine("Welcome user thanks for using password manager");
 
                 String PrivateKey = GetPrivateKey();
                 Console.WriteLine("Private Key Entered");
 
                 List<string> PublicKeys = new();
-               
-                
-                bool defaultAutocompleteMode = Prompt.Confirm("Load public keys?");
+
+
+                String option = Prompt.Input<String>("Load public keys?");
+
                 //loaded from enumeration 
                 List<string> currentValuesAdded = Enum.GetValues(typeof(PublicKeys)).Cast<PublicKeys>().ToList().Select(x => x.ToString()).ToList();
 
-                PublicKeys=defaultAutocompleteMode ?
+                
+
+                PublicKeys = yesPattern.IsMatch(option)|| string.IsNullOrEmpty(option) ?
                     //load saved values
-                    Prompt.MultiSelect("Passwords to encrypt at a time?" ,currentValuesAdded.ToArray() ,pageSize: 10).ToList()
+                    Prompt.MultiSelect("Passwords to encrypt at a time?", currentValuesAdded.ToArray(), pageSize: 10).ToList()
                     :
                     //enter others
                     Prompt.List<string>("Please add passwords(Enter to finish)").ToList();
 
 
-                if(Prompt.Confirm("Want to get a cyphered password or cyphered number?"))  MostrarResultados(PublicKeys, PrivateKey, Encryptor.EncryptStringPassword);
-                else MostrarResultados(PublicKeys, PrivateKey, Encryptor.EncryptNumberPassword);
+                List<Func<String, String, String>> funciones = new() { Encryptor.EncryptNumberPassword, Encryptor.EncryptStringPassword };
+                MostrarResultados(PublicKeys, PrivateKey, funciones);
 
 
 
-              //  StringOrNumberTF ?  MostrarResultados(PublicKeys, PrivateKey , Encryptor.EncryptStringPassword) : MostrarResultados(PublicKeys, PrivateKey, null);
+
+
+
 
 
 
 
             }
-            finally {
+            catch (Exception e) { Console.WriteLine($"Error! {e.Message}"); }
+            finally
+            {
                 Console.WriteLine("Done! ,Press any key to close...");
                 _ = Console.ReadLine();
             }
@@ -61,9 +71,10 @@ namespace PassManager
         public static string GetPrivateKey()
         {
             string PrivateKey = Prompt.Password("Enter private key", '*', new[] { Validators.Required() });
-            bool CheckPrivateKey = Prompt.Confirm("Do you to check your pk? (highly recommended if you are cyphering a new password) y-n ");
+            String CheckPrivateKey = Prompt.Input<String>("Do you to check your pk? (highly recommended if you are cyphering a new password) y-n ");
+
             bool confirmar = true;
-            if (CheckPrivateKey)
+            if (yesPattern.IsMatch(PrivateKey))
             {
                 switch (  Prompt.Select("Options to check:", new List<String> { "show it", "enter again" , "cypher with other PublicKey" }))
                 {
@@ -88,36 +99,30 @@ namespace PassManager
             return confirmar ? PrivateKey : GetPrivateKey();
         }
 
-        public static void MostrarResultados(List<String> PublicKeys, String PrivateKey,Func<String,String,String> funcionCifrado)
+        public static void MostrarResultados(List<String> PublicKeys, String PrivateKey,List<Func<String,String,String>> funcionesCifrado)
         {
             Console.WriteLine($"\nYou picked this public Keys: {string.Join(", ", PublicKeys)}");
+
             PublicKeys.ToList().ForEach(publicKey => {
-                Console.WriteLine($"Key: {publicKey} Cyphered: {funcionCifrado(publicKey, PrivateKey)}");
+
+                Console.WriteLine($"\nKey: {publicKey}");
+                foreach (var funcion in funcionesCifrado){
+                Console.WriteLine($"Cyphered:{funcion.Method.Name[7..]} {funcion(publicKey, PrivateKey)}");
+                }
             });
         }
 
-        //style stuff
-        public static void Style() {
-            Prompt.ColorSchema.Answer=ConsoleColor.DarkGreen;
-            Prompt.ColorSchema.Select=ConsoleColor.DarkBlue;
-            Prompt.ColorSchema.PromptSymbol=ConsoleColor.DarkMagenta;
-            Console.ForegroundColor=ConsoleColor.White;
-            Console.BackgroundColor=ConsoleColor.Blue;
-            Console.Title="🔑Password Manager";
-            Console.Clear();
-     
-        }
 
 
-        public static void OlderEasyWay() {
-            Console.Write("ENTER PASSWORD KEY:");
-            string passk = Console.ReadLine();
-            Console.Write("ENTER MASTER KEY:");
-            string mastk = Console.ReadLine();
-            Console.WriteLine("Results Encryption:\n");
-            var res = Encryptor.EncryptStringPassword(mastk ,passk);
-            Console.WriteLine(res);
-        }
+        //public static void OlderEasyWay() {
+        //    Console.Write("ENTER PASSWORD KEY:");
+        //    string passk = Console.ReadLine();
+        //    Console.Write("ENTER MASTER KEY:");
+        //    string mastk = Console.ReadLine();
+        //    Console.WriteLine("Results Encryption:\n");
+        //    var res = Encryptor.EncryptStringPassword(mastk ,passk);
+        //    Console.WriteLine(res);
+        //}
        
         enum PublicKeys {
             hectorsolar99,

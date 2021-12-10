@@ -9,6 +9,7 @@ namespace PassManager
     {
         public static string EncryptStringPassword(string publicKey, string privateKey)
         {
+
             byte[] clearBytes = Encoding.Unicode.GetBytes(publicKey);
             using (Aes encryptor = Aes.Create())
             {
@@ -27,8 +28,8 @@ namespace PassManager
         }
         public static string EncryptNumberPassword(string publicKey, string privateKey){
 
-
-           String text= EncryptStringPassword(publicKey, privateKey);
+           
+            String text = EncryptStringPassword(publicKey, privateKey);
 
 
             long sum = 0;
