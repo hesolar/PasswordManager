@@ -1,6 +1,6 @@
 # Password_Manager
 If you think about your passwords, you have 2 options(bad options); using the same password everywhere, use many different passwords that you wont remember.
-After i realised that i created this project a minimal password manager.
+So i created this project as a "minimal password manager".
 The main idea is that you only have to remember one password that generates different passwords for each site , how?
 With a private key and public keys.
 
