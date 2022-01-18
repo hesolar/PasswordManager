@@ -8,9 +8,10 @@ using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace PassManager
+namespace PassManager6
 {
-    public partial class Program {
+    public partial class Program
+    {
         //tiny.cc/hectorsolar99
         //bit.ly/hectorsolar99
 
@@ -18,27 +19,28 @@ namespace PassManager
         public static Regex yesPattern = new(@"[ok]||[accept]||[true]||[y*]||[s*]");
         #endregion
 
-        static void Main(string[] args) {
+        static void Main(string[] args)
+        {
 
             try
             {
 
                 Console.WriteLine("Welcome user thanks for using password manager");
 
-                String PrivateKey = GetPrivateKey();
+                string PrivateKey = GetPrivateKey();
                 Console.WriteLine("Private Key Entered");
 
                 List<string> PublicKeys = new();
 
 
-                String option = Prompt.Input<String>("Load public keys?");
+                string option = Prompt.Input<string>("Load public keys?");
 
                 //loaded from enumeration 
                 List<string> currentValuesAdded = Enum.GetValues(typeof(PublicKeys)).Cast<PublicKeys>().ToList().Select(x => x.ToString()).ToList();
 
-                
 
-                PublicKeys = yesPattern.IsMatch(option)|| string.IsNullOrEmpty(option) ?
+
+                PublicKeys = yesPattern.IsMatch(option) || string.IsNullOrEmpty(option) ?
                     //load saved values
                     Prompt.MultiSelect("Passwords to encrypt at a time?", currentValuesAdded.ToArray(), pageSize: 10).ToList()
                     :
@@ -46,7 +48,7 @@ namespace PassManager
                     Prompt.List<string>("Please add passwords(Enter to finish)").ToList();
 
 
-                List<Func<String, String, String>> funciones = new() { Encryptor.EncryptNumberPassword, Encryptor.EncryptStringPassword };
+                List<Func<string, string, string>> funciones = new() { Encryptor.EncryptNumberPassword, Encryptor.EncryptStringPassword };
                 MostrarResultados(PublicKeys, PrivateKey, funciones);
 
 
@@ -71,43 +73,45 @@ namespace PassManager
         public static string GetPrivateKey()
         {
             string PrivateKey = Prompt.Password("Enter private key", "*", new[] { Validators.Required() });
-            String CheckPrivateKey = Prompt.Input<String>("Do you to check your pk? (highly recommended if you are cyphering a new password) y-n ");
+            string CheckPrivateKey = Prompt.Input<string>("Do you to check your pk? (highly recommended if you are cyphering a new password) y-n ");
 
             bool confirmar = true;
             if (yesPattern.IsMatch(PrivateKey))
             {
-                switch (  Prompt.Select("Options to check:", new List<String> { "show it", "enter again" , "cypher with other PublicKey" }))
+                switch (Prompt.Select("Options to check:", new List<string> { "show it", "enter again", "cypher with other PublicKey" }))
                 {
                     case "show it":
-                        confirmar= Prompt.Confirm($"Ok, then is it right???? {PrivateKey}");
-                        
+                        confirmar = Prompt.Confirm($"Ok, then is it right???? {PrivateKey}");
+
                         break;
                     case "enter again":
                         string PrivateKey2 = Prompt.Password("Enter private key", "*", new[] { Validators.Required() });
-                        confirmar= PrivateKey.Equals(PrivateKey2);
+                        confirmar = PrivateKey.Equals(PrivateKey2);
                         break;
 
                     case "cypher with other PublicKey":
-                        String publicKey = Prompt.Input<String>("Enter the public key to cypher");
+                        string publicKey = Prompt.Input<string>("Enter the public key to cypher");
                         confirmar = Prompt.Confirm($"Ok, then is it right the cyphered???? {Encryptor.EncryptStringPassword(publicKey, PrivateKey)}");
                         break;
 
                 }
             }
             Console.Clear();
-            
+
             return confirmar ? PrivateKey : GetPrivateKey();
         }
 
-        public static void MostrarResultados(List<String> PublicKeys, String PrivateKey,List<Func<String,String,String>> funcionesCifrado)
+        public static void MostrarResultados(List<string> PublicKeys, string PrivateKey, List<Func<string, string, string>> funcionesCifrado)
         {
             Console.WriteLine($"\nYou picked this public Keys: {string.Join(", ", PublicKeys)}");
 
-            PublicKeys.ToList().ForEach(publicKey => {
+            PublicKeys.ToList().ForEach(publicKey =>
+            {
 
                 Console.WriteLine($"\nKey: {publicKey}");
-                foreach (var funcion in funcionesCifrado){
-                Console.WriteLine($"Cyphered:{funcion.Method.Name[7..]} {funcion(publicKey, PrivateKey)}");
+                foreach (var funcion in funcionesCifrado)
+                {
+                    Console.WriteLine($"Cyphered:{funcion.Method.Name[7..]} {funcion(publicKey, PrivateKey)}");
                 }
             });
         }
@@ -123,8 +127,9 @@ namespace PassManager
         //    var res = Encryptor.EncryptStringPassword(mastk ,passk);
         //    Console.WriteLine(res);
         //}
-       
-        enum PublicKeys {
+
+        enum PublicKeys
+        {
             hectorsolar99,
             github,
             gmail99,

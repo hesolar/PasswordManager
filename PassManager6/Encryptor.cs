@@ -3,7 +3,7 @@ using System.Text;
 using System.Security.Cryptography;
 using System.IO;
 
-namespace PassManager;
+namespace PassManager6;
 
 public static class Encryptor
 {
@@ -30,14 +30,14 @@ public static class Encryptor
     {
 
 
-        String text = EncryptStringPassword(publicKey, privateKey);
+        string text = EncryptStringPassword(publicKey, privateKey);
 
 
         long sum = 0;
         byte overflow;
         for (int i = 0; i < text.Length; i++)
         {
-            sum = (long)((16 * sum) ^ Convert.ToUInt32(text[i]));
+            sum = 16 * sum ^ Convert.ToUInt32(text[i]);
             overflow = (byte)(sum / 4294967296);
             sum -= overflow * 4294967296;
             sum ^= overflow;
