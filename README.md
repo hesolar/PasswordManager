@@ -9,12 +9,12 @@ For example suppose my private key is cat:
 so when i go to github on this program i calculate the password with cat as pk , and github as pk , it generates a password like this:
 7RFLT4g4mLE4zAZLxjxBhw==0
 
-Im working in a mobile simplified app, meanwhile you can acess anywhere with this link(https://dotnetfiddle.net/KLO8zk)
+Im working in a mobile simplified app, you can download the demos on demo-folder also you can acess anywhere with this link(https://dotnetfiddle.net/KLO8zk) 
 
-Update 1.0  New Features:
+Updated New Features:
 Includes:
 -Check the pk
 -Get a cyphered number(some places only allow numbers) 
 
-Credits to the library sharepromt, wich i used for some utilities.
+Credits to the library sharpromt, wich i used for some utilities.
 Using SharePromt library: https://github.com/shibayan/Sharprompt
